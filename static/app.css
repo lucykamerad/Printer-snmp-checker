@@ -1,0 +1,97 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;background:#111418;color:#d4d9e0;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:#1a1e24;border-bottom:1px solid #2a2f38;padding:0 1.25rem;height:44px;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:.82rem;font-weight:600;color:#b0bec8;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:.5rem}
+.topbar-title svg{opacity:.5}
+.topbar-right{display:flex;align-items:center;gap:.5rem;font-size:.78rem}
+.btn-tb{padding:.3rem .65rem;background:#222a35;border:1px solid #2e3d52;border-radius:2px;color:#8899aa;font-size:.75rem;cursor:pointer;font-family:inherit;transition:background .15s,color .15s;white-space:nowrap}
+.btn-tb:hover{background:#2c3d52;color:#c8d4e0}
+.btn-tb.primary{border-color:#1d3d6e;color:#4a90d9}
+.btn-tb.primary:hover{background:#1d3d6e;color:#90c0f0}
+.btn-tb:disabled{opacity:.4;cursor:not-allowed}
+
+/* MAIN */
+.main{max-width:1440px;margin:0 auto;padding:1.1rem 1.25rem}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:1px;background:#2a2f38;border:1px solid #2a2f38;border-radius:3px;overflow:hidden;margin-bottom:1rem}
+.stat-block{flex:1;background:#1a1e24;padding:.75rem 1rem}
+.stat-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.07em;color:#4a5568;margin-bottom:.2rem}
+.stat-value{font-size:1.35rem;font-weight:700;color:#c8d4e0;font-variant-numeric:tabular-nums}
+.stat-sub{font-size:.68rem;color:#c0392b;margin-top:.1rem;font-weight:600}
+.stat-sub.ok{color:#27ae60}
+
+/* CONTROLS */
+.controls{display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem;flex-wrap:wrap}
+.ctrl-input{padding:.4rem .65rem;background:#1a1e24;border:1px solid #2a2f38;border-radius:2px;color:#d4d9e0;font-size:.82rem;outline:none;font-family:inherit}
+.ctrl-input:focus{border-color:#4a90d9}
+#search-input{width:220px}
+.ctrl-select{padding:.4rem .6rem;background:#1a1e24;border:1px solid #2a2f38;border-radius:2px;color:#d4d9e0;font-size:.82rem;outline:none;cursor:pointer;font-family:inherit}
+.ctrl-select:focus{border-color:#4a90d9}
+.ctrl-sep{width:1px;height:22px;background:#2a2f38;margin:0 .15rem}
+
+/* SCAN PROGRESS */
+.scan-bar-wrap{background:#1a1e24;border:1px solid #2a2f38;border-radius:3px;overflow:hidden;height:3px;flex:1;min-width:120px;display:none}
+.scan-bar-fill{height:100%;background:#4a90d9;transition:width .3s;width:0%}
+#scan-label{font-size:.72rem;color:#4a5568;font-family:"Consolas","Courier New",monospace;white-space:nowrap}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:1px;background:#2a2f38;border:1px solid #2a2f38;border-radius:3px;overflow:hidden}
+.card{background:#1a1e24;padding:.9rem 1rem;position:relative;transition:background .1s}
+.card:hover{background:#1d2128}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem;padding-bottom:.5rem;border-bottom:1px solid #1e232a}
+.card-left{display:flex;flex-direction:column;gap:.15rem}
+.card-name{font-size:.88rem;font-weight:700;color:#c8d4e0;font-family:"Consolas","Courier New",monospace;line-height:1.2}
+.card-ip{font-family:"Consolas","Courier New",monospace;font-size:.76rem;color:#4a90d9}
+.card-time{font-size:.64rem;color:#333d4a;font-family:"Consolas",monospace}
+.card-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .4rem;border-radius:2px;border:1px solid}
+.badge-ok{color:#27ae60;border-color:#1a3d27}
+.badge-warn{color:#d35400;border-color:#3d2600}
+.badge-crit{color:#c0392b;border-color:#3d1515;animation:pulse-crit 2s infinite}
+.badge-nd{color:#4a5568;border-color:#252c37}
+@keyframes pulse-crit{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* SUPPLY ROWS */
+.sec-label{font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:#333d4a;margin:.5rem 0 .3rem;padding-bottom:.2rem;border-bottom:1px solid #1c2028}
+.supply-row{margin-bottom:.35rem}
+.supply-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.18rem}
+.supply-name{font-size:.76rem;color:#8899aa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.supply-pct{font-family:"Consolas",monospace;font-size:.74rem;font-weight:600;white-space:nowrap}
+.pct-ok{color:#27ae60}
+.pct-warn{color:#d35400}
+.pct-crit{color:#c0392b}
+.pct-nd{color:#4a5568}
+.bar-track{height:4px;background:#1c2028;border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.fill-ok{background:#27ae60}
+.fill-warn{background:#d35400}
+.fill-crit{background:#c0392b}
+.fill-nd{background:#333d4a;width:100%!important}
+
+.card-foot{display:flex;justify-content:flex-end;margin-top:.6rem;padding-top:.4rem;border-top:1px solid #1c2028;font-size:.64rem;color:#333d4a;font-family:"Consolas",monospace}
+.empty{grid-column:1/-1;padding:3rem;text-align:center;color:#333d4a;font-size:.82rem;background:#1a1e24}
+.empty-sub{font-size:.7rem;color:#252c37;margin-top:.4rem}
+
+/* CONFIG PANEL */
+.cfg-panel{background:#1a1e24;border:1px solid #2a2f38;border-radius:3px;padding:1rem;margin-bottom:.85rem;display:none}
+.cfg-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.cfg-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.07em;color:#4a5568;white-space:nowrap}
+.cfg-input{padding:.35rem .6rem;background:#111418;border:1px solid #252c37;border-radius:2px;color:#e0e6ee;font-size:.82rem;font-family:"Consolas",monospace;outline:none;width:200px}
+.cfg-input:focus{border-color:#4a90d9}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+.modal-box{background:#1a1e24;border:1px solid #2a2f38;border-radius:3px;padding:1.5rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;color:#6b7785;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid #252c37}
+.modal-actions{display:flex;gap:.5rem;margin-top:1rem}
+
+/* TOAST */
+#toast{position:fixed;bottom:1rem;right:1rem;background:#1a1e24;border:1px solid #2a2f38;color:#8899aa;padding:.5rem .9rem;border-radius:2px;font-size:.78rem;font-family:"Consolas",monospace;opacity:0;pointer-events:none;transition:opacity .2s;z-index:300}
+#toast.show{opacity:1}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#111418}
+::-webkit-scrollbar-thumb{background:#2a2f38;border-radius:2px}

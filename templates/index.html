@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ink Monitor</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4a90d9" stroke-width="1.8">
+      <path d="M6 18h12M4 6h16M8 14h8M10 10h4"/>
+    </svg>
+    Ink Monitor
+  </span>
+  <div class="topbar-right">
+    <span id="scan-label">—</span>
+    <div class="scan-bar-wrap" id="scan-bar-wrap"><div class="scan-bar-fill" id="scan-bar-fill"></div></div>
+    <button class="btn-tb" id="btn-cfg">⚙ Config</button>
+    <button class="btn-tb primary" id="btn-scan">▶ Scansiona</button>
+    <button class="btn-tb" id="btn-export-txt">↓ TXT</button>
+    <button class="btn-tb" id="btn-export-json">↓ JSON</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- CONFIG PANEL -->
+  <div class="cfg-panel" id="cfg-panel">
+    <div class="cfg-row">
+      <span class="cfg-label">Subnet</span>
+      <input class="cfg-input" id="cfg-subnet" placeholder="192.168.1.0/24" style="width:160px">
+      <span class="cfg-label">Community</span>
+      <input class="cfg-input" id="cfg-community" value="public" style="width:120px">
+      <span class="cfg-label">Host specifici (separati da virgola)</span>
+      <input class="cfg-input" id="cfg-hosts" placeholder="lascia vuoto per auto-scan" style="width:280px">
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-block">
+      <div class="stat-label">Stampanti</div>
+      <div class="stat-value" id="st-total">—</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Critiche ≤ 5%</div>
+      <div class="stat-value" id="st-crit">—</div>
+      <div class="stat-sub" id="st-crit-sub"></div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Basse ≤ 15%</div>
+      <div class="stat-value" id="st-warn">—</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Forniture totali</div>
+      <div class="stat-value" id="st-supplies">—</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Ultima scansione</div>
+      <div class="stat-value" style="font-size:.9rem;padding-top:.25rem" id="st-ts">—</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <input type="text" class="ctrl-input" id="search-input" placeholder="Filtra nome / IP...">
+    <select class="ctrl-select" id="sort-select">
+      <option value="min_asc">Ordine: Livello ↑ (critico prima)</option>
+      <option value="min_desc">Ordine: Livello ↓ (pieno prima)</option>
+      <option value="name">Ordine: Nome</option>
+      <option value="ip">Ordine: IP</option>
+    </select>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid" id="printers-grid">
+    <div class="empty">
+      Nessun dato — premi <strong>▶ Scansiona</strong> per iniziare
+      <div class="empty-sub">assicurati che snmpwalk sia installato: <code>sudo apt install snmp</code></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
