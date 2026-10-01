@@ -1,6 +1,7 @@
 """HTTP request handler: serves the UI, static assets and the JSON/scan API."""
 
 import http.server
+import ipaddress
 import json
 import threading
 import urllib.parse
@@ -22,6 +23,30 @@ STATIC_CONTENT_TYPES = {
     '.css': 'text/css; charset=utf-8',
     '.js':  'application/javascript; charset=utf-8',
 }
+
+
+MAX_POST_BYTES = 64 * 1024
+MAX_SCAN_HOSTS = 4096
+
+
+def validate_scan_params(subnet, hosts):
+    """Return an error string if subnet/hosts are not plain IP data, else None.
+
+    Both values are passed as command-line arguments to nmap/ping/snmp*, so a
+    value such as "-iL /etc/passwd" must never reach them.
+    """
+    try:
+        if subnet:
+            net = ipaddress.ip_network(subnet, strict=False)
+            if net.version != 4 or net.num_addresses > MAX_SCAN_HOSTS * 4:
+                return "Subnet non valida o troppo grande (usa IPv4, es. 192.168.1.0/24)"
+        for h in hosts or []:
+            ipaddress.ip_address(h)
+        if hosts and len(hosts) > MAX_SCAN_HOSTS:
+            return "Troppi host specificati"
+    except ValueError as e:
+        return f"Indirizzo non valido: {e}"
+    return None
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -110,7 +135,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/api/scan":
-            length = int(self.headers.get("Content-Length", 0))
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+            except ValueError:
+                length = -1
+            if length < 0 or length > MAX_POST_BYTES:
+                self.send_json({"ok": False, "error": "Richiesta non valida"}, 400)
+                return
             raw    = self.rfile.read(length).decode("utf-8", errors="replace")
             params = urllib.parse.parse_qs(raw)
 
@@ -123,7 +154,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.send_json({"ok": False, "error": "snmpwalk/snmpget non trovati. Installa: sudo apt install snmp"})
                 return
 
-            if SCAN_STATUS["running"]:
+            error = validate_scan_params(subnet, hosts)
+            if error:
+                self.send_json({"ok": False, "error": error}, 400)
+                return
+
+            with STATE_LOCK:
+                already_running = SCAN_STATUS["running"]
+            if already_running:
                 self.send_json({"ok": False, "error": "Scansione già in corso"})
                 return
 
