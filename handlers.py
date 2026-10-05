@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 from config import CONFIG
-from export import export_txt
+from export import export_csv, export_txt
 from log import log
 from scanner import PRINTERS, SCAN_STATUS, STATE_LOCK, run_scan
 from snmp import SNMPGET, SNMPWALK
@@ -61,10 +61,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def send_text(self, text, filename="export.txt"):
+    def send_text(self, text, filename="export.txt", content_type="text/plain; charset=utf-8"):
         body = text.encode("utf-8")
         self.send_response(200)
-        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Type", content_type)
         self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -116,6 +116,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         elif path == "/api/export/txt":
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             self.send_text(export_txt(), f"ink_levels_{ts}.txt")
+
+        elif path == "/api/export/csv":
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.send_text(export_csv(), f"ink_levels_{ts}.csv", "text/csv; charset=utf-8")
 
         elif path == "/api/export/json":
             with STATE_LOCK:

@@ -1,0 +1,13 @@
+[Unit]
+Description=Printer Ink/Toner SNMP Monitor Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/percorso/di/Printer-snmp-checker
+ExecStart=/usr/bin/python3 /percorso/di/Printer-snmp-checker/main.py --port 8081 --auto-scan 30
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

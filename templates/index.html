@@ -9,19 +9,15 @@
 <body>
 
 <div class="topbar">
-  <span class="topbar-title">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4a90d9" stroke-width="1.8">
-      <path d="M6 18h12M4 6h16M8 14h8M10 10h4"/>
-    </svg>
-    Ink Monitor
-  </span>
+  <span class="topbar-title">Ink Monitor</span>
   <div class="topbar-right">
     <span id="scan-label">—</span>
     <div class="scan-bar-wrap" id="scan-bar-wrap"><div class="scan-bar-fill" id="scan-bar-fill"></div></div>
-    <button class="btn-tb" id="btn-cfg">⚙ Config</button>
-    <button class="btn-tb primary" id="btn-scan">▶ Scansiona</button>
-    <button class="btn-tb" id="btn-export-txt">↓ TXT</button>
-    <button class="btn-tb" id="btn-export-json">↓ JSON</button>
+    <button class="btn-tb" id="btn-cfg">Impostazioni</button>
+    <button class="btn-tb primary" id="btn-scan">Scansiona</button>
+    <button class="btn-tb" id="btn-export-txt">TXT</button>
+    <button class="btn-tb" id="btn-export-csv">CSV</button>
+    <button class="btn-tb" id="btn-export-json">JSON</button>
   </div>
 </div>
 
@@ -45,12 +41,12 @@
       <div class="stat-value" id="st-total">—</div>
     </div>
     <div class="stat-block">
-      <div class="stat-label">Critiche ≤ 5%</div>
+      <div class="stat-label">Critiche (fino al 5%)</div>
       <div class="stat-value" id="st-crit">—</div>
       <div class="stat-sub" id="st-crit-sub"></div>
     </div>
     <div class="stat-block">
-      <div class="stat-label">Basse ≤ 15%</div>
+      <div class="stat-label">Basse (fino al 15%)</div>
       <div class="stat-value" id="st-warn">—</div>
     </div>
     <div class="stat-block">
@@ -59,7 +55,7 @@
     </div>
     <div class="stat-block">
       <div class="stat-label">Ultima scansione</div>
-      <div class="stat-value" style="font-size:.9rem;padding-top:.25rem" id="st-ts">—</div>
+      <div class="stat-value small" id="st-ts">—</div>
     </div>
   </div>
 
@@ -67,18 +63,18 @@
   <div class="controls">
     <input type="text" class="ctrl-input" id="search-input" placeholder="Filtra nome / IP...">
     <select class="ctrl-select" id="sort-select">
-      <option value="min_asc">Ordine: Livello ↑ (critico prima)</option>
-      <option value="min_desc">Ordine: Livello ↓ (pieno prima)</option>
-      <option value="name">Ordine: Nome</option>
-      <option value="ip">Ordine: IP</option>
+      <option value="min_asc">Livello più basso prima</option>
+      <option value="min_desc">Livello più alto prima</option>
+      <option value="name">Nome</option>
+      <option value="ip">Indirizzo IP</option>
     </select>
   </div>
 
   <!-- GRID -->
   <div class="grid" id="printers-grid">
     <div class="empty">
-      Nessun dato — premi <strong>▶ Scansiona</strong> per iniziare
-      <div class="empty-sub">assicurati che snmpwalk sia installato: <code>sudo apt install snmp</code></div>
+      Nessun dato. Premi <strong>Scansiona</strong> per iniziare.
+      <div class="empty-sub">Serve snmpwalk: <code>sudo apt install snmp</code></div>
     </div>
   </div>
 </div>

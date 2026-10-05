@@ -1,8 +1,31 @@
 """Renders the current scan results as a plain-text report."""
 
+import csv
+import io
 from datetime import datetime
 
 from scanner import PRINTERS, STATE_LOCK, WARN_LEVEL, CRIT_LEVEL
+
+
+def export_csv():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Stampante", "IP", "Modello", "Seriale", "Pagine Totali", "Min Livello %",
+                     "Fornitura", "Livello %", "Corrente", "Massimo", "Ultima Scansione"])
+    with STATE_LOCK:
+        printers = list(PRINTERS)
+    for p in printers:
+        min_pct = f"{p['min_pct']:.1f}" if p.get("min_pct") is not None else "N/D"
+        page_count = p["page_count"] if p.get("page_count") is not None else ""
+        head = [p["name"], p["ip"], p.get("model") or "", p.get("serial") or "", page_count, min_pct]
+        scanned = p.get("scanned_at", "")
+        if not p.get("supplies"):
+            writer.writerow(head + ["Nessuna fornitura", "", "", "", scanned])
+            continue
+        for s in p["supplies"]:
+            pct = f"{s['percent']:.1f}" if s.get("percent") is not None else "N/D"
+            writer.writerow(head + [s["desc"], pct, s["current"], s["maximum"], scanned])
+    return output.getvalue()
 
 
 def export_txt():

@@ -19,8 +19,8 @@ function pctClass(pct){
 
 function badgeHtml(min_pct){
   if(min_pct===null||min_pct===undefined) return '<span class="card-badge badge-nd">N/D</span>';
-  if(min_pct<=CRIT) return `<span class="card-badge badge-crit">⚠ CRITICO ${min_pct.toFixed(1)}%</span>`;
-  if(min_pct<=WARN) return `<span class="card-badge badge-warn">↓ BASSO ${min_pct.toFixed(1)}%</span>`;
+  if(min_pct<=CRIT) return `<span class="card-badge badge-crit">Critico ${min_pct.toFixed(1)}%</span>`;
+  if(min_pct<=WARN) return `<span class="card-badge badge-warn">Basso ${min_pct.toFixed(1)}%</span>`;
   return `<span class="card-badge badge-ok">OK ${min_pct.toFixed(1)}%</span>`;
 }
 
@@ -83,19 +83,23 @@ function renderGrid(){
         ${barHtml(s.percent).replace('__DESC__', esc(s.desc))}
       </div>`).join('');
 
+    const meta = [p.model, p.serial && 'S/N ' + p.serial].filter(Boolean).map(esc).join(' · ');
+    const pages = p.page_count!=null ? `${p.page_count.toLocaleString('it-IT')} pagine` : '';
+
     return `
     <div class="card">
       <div class="card-head">
         <div class="card-left">
           <span class="card-name">${esc(p.name)}</span>
           <span class="card-ip">${esc(p.ip)}</span>
+          ${meta ? `<span class="card-meta">${meta}</span>` : ''}
         </div>
         ${badgeHtml(p.min_pct)}
       </div>
       ${p.supplies.length
         ? `<div class="sec-label">Forniture (${p.supplies.length})</div>${supHtml}`
         : '<div class="sec-label">Nessuna fornitura rilevata</div>'}
-      <div class="card-foot">rilevato alle ${esc(p.scanned_at||'—')}</div>
+      <div class="card-foot"><span>${pages}</span><span>Letto alle ${esc(p.scanned_at||'—')}</span></div>
     </div>`;
   }).join('');
 }
@@ -108,7 +112,7 @@ function updateStats(printers, ts){
   const supplies= printers.reduce((s,p)=>s+p.supplies.length,0);
   document.getElementById('st-total').textContent    = total||'—';
   document.getElementById('st-crit').textContent     = total?crits:'—';
-  document.getElementById('st-crit-sub').textContent = crits>0 ? `${crits} richiedo${crits>1?'no':''} attenzione!` : '';
+  document.getElementById('st-crit-sub').textContent = crits>0 ? `${crits} ${crits>1?'richiedono':'richiede'} attenzione` : '';
   document.getElementById('st-warn').textContent     = total?warns:'—';
   document.getElementById('st-supplies').textContent = total?supplies:'—';
   document.getElementById('st-ts').textContent       = ts||'—';
@@ -128,7 +132,7 @@ function startScan(){
   if(hosts)  params.append('hosts', hosts.join(','));
 
   btn.disabled = true;
-  btn.textContent = '↻ Scansione...';
+  btn.textContent = 'Scansione in corso';
   document.getElementById('scan-bar-wrap').style.display = 'block';
   document.getElementById('scan-label').textContent = 'Avvio...';
 
@@ -143,7 +147,7 @@ function startScan(){
 
 function resetScanBtn(){
   const btn = document.getElementById('btn-scan');
-  btn.disabled = false; btn.textContent = '▶ Scansiona';
+  btn.disabled = false; btn.textContent = 'Scansiona';
   document.getElementById('scan-bar-wrap').style.display = 'none';
 }
 
@@ -161,7 +165,7 @@ function pollStatus(){
         pollTimer = setTimeout(pollStatus, 600);
       } else {
         fill.style.width = '100%';
-        label.textContent = d.error ? 'Errore' : `Completata — ${d.finished||''}`;
+        label.textContent = d.error ? 'Errore' : `Completata alle ${d.finished||''}`;
         setTimeout(()=>{ document.getElementById('scan-bar-wrap').style.display='none'; label.textContent='—'; },3000);
         resetScanBtn();
         fetchPrinters();
@@ -191,6 +195,9 @@ function toggleCfg(){
 function exportTxt(){
   window.open('/api/export/txt','_blank');
 }
+function exportCsv(){
+  window.open('/api/export/csv','_blank');
+}
 function exportJson(){
   window.open('/api/export/json','_blank');
 }
@@ -199,6 +206,7 @@ function exportJson(){
 document.getElementById('btn-cfg').addEventListener('click', toggleCfg);
 document.getElementById('btn-scan').addEventListener('click', startScan);
 document.getElementById('btn-export-txt').addEventListener('click', exportTxt);
+document.getElementById('btn-export-csv').addEventListener('click', exportCsv);
 document.getElementById('btn-export-json').addEventListener('click', exportJson);
 document.getElementById('search-input').addEventListener('input', renderGrid);
 document.getElementById('sort-select').addEventListener('change', renderGrid);

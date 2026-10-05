@@ -18,10 +18,12 @@ import argparse
 import socket
 import socketserver
 import sys
+import threading
 
 from config import CONFIG
 from discovery import get_local_subnet
 from handlers import Handler
+from scanner import auto_scan_worker, load_cache
 from snmp import SNMPGET, SNMPWALK
 
 DEFAULT_PORT      = 8081
@@ -34,11 +36,15 @@ def main():
     parser.add_argument("--subnet",    default=None)
     parser.add_argument("--community", default=DEFAULT_COMMUNITY)
     parser.add_argument("--bind",      default="0.0.0.0")
+    parser.add_argument("--auto-scan", type=int, default=0, metavar="MIN",
+                        help="scansione automatica ogni MIN minuti (0 = disattivata)")
     args = parser.parse_args()
 
     subnet = args.subnet or get_local_subnet()
     CONFIG["subnet"] = subnet
     CONFIG["community"] = args.community
+
+    load_cache()
 
     if not SNMPWALK or not SNMPGET:
         print("\n[!] ATTENZIONE: snmpwalk/snmpget non trovati.")
@@ -47,6 +53,11 @@ def main():
     else:
         print(f"[✓] snmpget:  {SNMPGET}")
         print(f"[✓] snmpwalk: {SNMPWALK}")
+
+    if args.auto_scan > 0:
+        print(f"[✓] Scansione automatica attiva ogni {args.auto_scan} minuti")
+        threading.Thread(target=auto_scan_worker,
+                         args=(args.auto_scan, args.community), daemon=True).start()
 
     try:
         server = socketserver.ThreadingTCPServer((args.bind, args.port), Handler)

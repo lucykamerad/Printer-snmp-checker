@@ -32,6 +32,7 @@ Parametri CLI:
 | `--subnet` | subnet locale rilevata automaticamente | Subnet da scansionare (es. `10.0.0.0/24`) |
 | `--community` | `public` | Community SNMP v2c |
 | `--bind` | `0.0.0.0` | Indirizzo di bind |
+| `--auto-scan` | `0` | Rilancia la scansione ogni N minuti (0 = disattivata) |
 
 Una volta avviato, la UI è su `http://localhost:<porta>`.
 
@@ -41,7 +42,8 @@ Una volta avviato, la UI è su `http://localhost:<porta>`.
 2. **Scan** (`scanner.py`): per ogni host trovato interroga via SNMP (Printer-MIB, RFC 3805) nome dispositivo e livelli delle forniture (toner/inchiostro/tamburo/waste), calcola la percentuale residua e ordina i risultati dal livello più basso al più alto. Scan eseguita in background su thread pool, stato consultabile via API mentre è in corso.
 3. **SNMP** (`snmp.py`): wrapper su `snmpget`/`snmpwalk` con decodifica automatica di valori Hex-STRING (usati da alcune stampanti HP per i nomi forniture).
 4. **Handlers** (`handlers.py`): server HTTP che serve la UI, gli asset statici e le API JSON.
-5. **Export** (`export.py`): genera un report testuale con barre di livello ASCII.
+5. **Export** (`export.py`): report testuale con barre di livello ASCII e export CSV.
+6. **Cache** (`scanner.py`): l'ultimo risultato è salvato in `printers_cache.json` e ricaricato all'avvio, così la UI non parte vuota. Il file è escluso da git perché contiene dati della tua rete.
 
 ## API
 
@@ -52,7 +54,12 @@ Una volta avviato, la UI è su `http://localhost:<porta>`.
 | `/api/printers` | GET | Elenco stampanti con i dati dell'ultima scansione |
 | `/api/scan` | POST | Avvia una scansione. Parametri form: `subnet`, `community`, `hosts` (lista IP separati da virgola, opzionale, salta la discovery) |
 | `/api/export/txt` | GET | Scarica report testuale |
+| `/api/export/csv` | GET | Scarica una riga per fornitura in CSV (con modello, seriale, pagine totali) |
 | `/api/export/json` | GET | Scarica dati grezzi in JSON |
+
+## Avvio come servizio (systemd)
+
+`printer-ink-monitor.service` è un esempio di unit file: sostituisci `/percorso/di/Printer-snmp-checker` con il percorso reale e copialo in `~/.config/systemd/user/`, poi `systemctl --user enable --now printer-ink-monitor`.
 
 ## Soglie di livello
 
@@ -75,6 +82,7 @@ handlers.py      HTTP handler: UI, static, API
 export.py        report testuale esportabile
 log.py           logging con timestamp
 avvia_ink_monitor.sh   script di avvio/riavvio rapido
+printer-ink-monitor.service   esempio di unit systemd
 templates/       HTML della UI
 static/          asset statici (CSS/JS)
 ```
